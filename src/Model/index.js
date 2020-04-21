@@ -1,4 +1,4 @@
-'use strict'
+"use strict";
 
 /*
  * adonis-lucid-filter
@@ -9,35 +9,36 @@
  * file that was distributed with this source code.
  */
 
-const _ = require('lodash')
+const _ = require("lodash");
 
 /**
  * Methods of query builder to be added
  * to model filter
  */
 const aggregates = [
-  'where',
-  'whereNot',
-  'whereIn',
-  'whereNotIn',
-  'whereNull',
-  'whereNotNull',
-  'whereExists',
-  'whereNotExists',
-  'whereBetween',
-  'whereNotBetween',
-  'whereRaw',
-  'whereHas',
-  'orWhereHas',
-  'whereDoesntHave',
-  'orWhereDoesntHave',
-  'with',
-  'withCount',
-  'has',
-  'orHas',
-  'doesntHave',
-  'orDoesntHave'
-]
+  "where",
+  "whereNot",
+  "whereIn",
+  "whereNotIn",
+  "whereNull",
+  "whereNotNull",
+  "whereExists",
+  "whereNotExists",
+  "whereBetween",
+  "whereNotBetween",
+  "whereRaw",
+  "whereHas",
+  "orWhereHas",
+  "whereDoesntHave",
+  "orWhereDoesntHave",
+  "with",
+  "withCount",
+  "has",
+  "orHas",
+  "doesntHave",
+  "orDoesntHave",
+  "orderBy",
+];
 
 /**
  * ModelFilter class to filtering Adonis Lucid ORM
@@ -54,10 +55,10 @@ class ModelFilter {
    *
    * @return {void}
    */
-  constructor (query, input = {}) {
-    this.$query = query
-    this.$input = this._removeEmptyInput(input)
-    this.$blacklist = this.constructor.blacklist
+  constructor(query, input = {}) {
+    this.$query = query;
+    this.$input = this._removeEmptyInput(input);
+    this.$blacklist = this.constructor.blacklist;
   }
 
   /**
@@ -68,8 +69,8 @@ class ModelFilter {
    *
    * @return {Boolean}
    */
-  static get dropId () {
-    return true
+  static get dropId() {
+    return true;
   }
 
   /**
@@ -80,8 +81,8 @@ class ModelFilter {
    *
    * @return String[]
    */
-  static get blacklist () {
-    return []
+  static get blacklist() {
+    return [];
   }
 
   /**
@@ -91,14 +92,14 @@ class ModelFilter {
    *
    * @return {QueryBuilder}
    */
-  handle () {
+  handle() {
     /* istanbul ignore next */
-    if (this.setup && typeof (this.setup) === 'function') {
-      this.setup(this.$query)
+    if (this.setup && typeof this.setup === "function") {
+      this.setup(this.$query);
     }
-    this._filterInput()
+    this._filterInput();
 
-    return this.$query
+    return this.$query;
   }
 
   /**
@@ -110,11 +111,11 @@ class ModelFilter {
    *
    * @return {Boolean}
    */
-  whitelistMethod (method) {
-    const index = this.$blacklist.indexOf(method)
-    if (~index) this.$blacklist.splice(index, 1)
+  whitelistMethod(method) {
+    const index = this.$blacklist.indexOf(method);
+    if (~index) this.$blacklist.splice(index, 1);
 
-    return (!!~index)
+    return !!~index;
   }
 
   /**
@@ -127,11 +128,11 @@ class ModelFilter {
    *
    * @return {Object|String|Null}
    */
-  input (key = null, defaultValue = null) {
+  input(key = null, defaultValue = null) {
     if (key === null) {
-      return this.$input
+      return this.$input;
     }
-    return this.$input[key] || defaultValue
+    return this.$input[key] || defaultValue;
   }
 
   /**
@@ -146,14 +147,14 @@ class ModelFilter {
    *
    * @return {QueryBuilder}
    */
-  related (relation, column, operator, value = null) {
+  related(relation, column, operator, value = null) {
     if (value === null) {
-      value = operator
-      operator = '='
+      value = operator;
+      operator = "=";
     }
     return this.$query.whereHas(relation, (builder) => {
-      builder.where(column, operator, value)
-    })
+      builder.where(column, operator, value);
+    });
   }
 
   /**
@@ -164,15 +165,15 @@ class ModelFilter {
    *
    * @return {void}
    */
-  _filterInput () {
-    const input = this.$input
+  _filterInput() {
+    const input = this.$input;
 
     for (const key in input) {
-      const method = this._getFilterMethod(key)
-      const value = input[key]
+      const method = this._getFilterMethod(key);
+      const value = input[key];
 
       if (this._methodIsCallable(method)) {
-        this[method](value)
+        this[method](value);
       }
     }
   }
@@ -187,8 +188,10 @@ class ModelFilter {
    *
    * @return {String}
    */
-  _getFilterMethod (key) {
-    return _.camelCase(this.constructor.dropId ? key.replace(/^(.*)_id$/, '$1') : key)
+  _getFilterMethod(key) {
+    return _.camelCase(
+      this.constructor.dropId ? key.replace(/^(.*)_id$/, "$1") : key
+    );
   }
 
   /**
@@ -201,17 +204,17 @@ class ModelFilter {
    *
    * @return {Object}
    */
-  _removeEmptyInput (input) {
-    const filterableInput = {}
+  _removeEmptyInput(input) {
+    const filterableInput = {};
 
     for (const key in input) {
-      const value = input[key]
+      const value = input[key];
 
-      if (value !== '' && value !== null) {
-        filterableInput[key] = value
+      if (value !== "" && value !== null) {
+        filterableInput[key] = value;
       }
     }
-    return filterableInput
+    return filterableInput;
   }
 
   /**
@@ -225,10 +228,12 @@ class ModelFilter {
    *
    * @return {Boolean}
    */
-  _methodIsCallable (method) {
-    return !!this[method] &&
+  _methodIsCallable(method) {
+    return (
+      !!this[method] &&
       !this._methodIsBlacklisted(method) &&
-      typeof (this[method]) === 'function'
+      typeof this[method] === "function"
+    );
   }
 
   /**
@@ -241,15 +246,15 @@ class ModelFilter {
    *
    * @return {Boolean}
    */
-  _methodIsBlacklisted (method) {
-    return !!(~this.$blacklist.indexOf(method))
+  _methodIsBlacklisted(method) {
+    return !!~this.$blacklist.indexOf(method);
   }
 }
 
 aggregates.forEach((method) => {
   ModelFilter.prototype[method] = function (...args) {
-    return this.$query[method](...args)
-  }
-})
+    return this.$query[method](...args);
+  };
+});
 
-module.exports = ModelFilter
+module.exports = ModelFilter;
